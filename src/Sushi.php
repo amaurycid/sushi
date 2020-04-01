@@ -126,8 +126,14 @@ trait Sushi
                 $table->timestamps();
             }
         });
+        
+        $rows = collect($rows);
 
-        static::insert($rows);
+        $chunks = $rows->chunk(500);
+
+        foreach ($chunks as $chunk) {
+            static::insert($chunk->toArray());
+        }
     }
 
     public function usesTimestamps()
